@@ -107,3 +107,46 @@ export async function DELETE(
     );
   }
 }
+
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await connectDB();
+
+    const token = req.headers.get("authorization")?.split(" ")[1];
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = getUserFromRequest(req);
+    if (!user) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { title, amount, category, date, note } = body;
+
+    const expense = await Expense.findOneAndUpdate(
+      { _id: params.id, userId: user.userId }, // 🔐 ownership check
+      { title, amount, category, date, note },
+      { new: true }
+    );
+
+    if (!expense) {
+      return NextResponse.json(
+        { error: "Expense not found or unauthorized" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ expense }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Failed to update expense" },
+      { status: 500 }
+    );
+  }
+}
