@@ -35,14 +35,22 @@ export async function POST(req: Request) {
 
     const token = signToken({ userId: user._id });
 
-    return NextResponse.json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+    const response = NextResponse.json(
+      { message: "Login successful" },
+      { status: 200 }
+    );
+
+    // ✅ THIS IS REQUIRED
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
