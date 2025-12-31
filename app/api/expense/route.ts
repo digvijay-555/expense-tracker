@@ -70,32 +70,72 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// export async function DELETE(
+//   req: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   try {
+
+//     await connectDB();
+
+//     console.log(params);
+
+//     const user = getUserFromRequest(req);
+
+//     if (!user) {
+//       return NextResponse.json(
+//         { message: "Unauthorized" },
+//         { status: 401 }
+//       );
+//     }
+
+    
+
+//     const expense = await Expense.findOneAndDelete({
+//       _id: params.id,
+//       userId: user.userId,
+//     });
+
+//     if (!expense) {
+//       return NextResponse.json(
+//         { message: "Expense not found" },
+//         { status: 404 }
+//       );
+//     }
+
+//     return NextResponse.json({ message: "Expense deleted" });
+//   } catch (error) {
+//     console.error("Delete expense error:", error);
+//     return NextResponse.json(
+//       { message: "Failed to delete expense" },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+export async function DELETE(req: NextRequest) {
   try {
     const user = getUserFromRequest(req);
-
     if (!user) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ message: "Missing id" }, { status: 400 });
     }
 
     await connectDB();
 
     const expense = await Expense.findOneAndDelete({
-      _id: params.id,
+      _id: id,
       userId: user.userId,
     });
 
     if (!expense) {
-      return NextResponse.json(
-        { message: "Expense not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "Expense not found" }, { status: 404 });
     }
 
     return NextResponse.json({ message: "Expense deleted" });
@@ -110,9 +150,8 @@ export async function DELETE(
 
 
 export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  req: NextRequest) 
+  {
   try {
     await connectDB();
 
@@ -126,11 +165,14 @@ export async function PUT(
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
     const body = await req.json();
     const { title, amount, category, date, note } = body;
 
     const expense = await Expense.findOneAndUpdate(
-      { _id: params.id, userId: user.userId }, // 🔐 ownership check
+      { _id: id, userId: user.userId }, // 🔐 ownership check
       { title, amount, category, date, note },
       { new: true }
     );
