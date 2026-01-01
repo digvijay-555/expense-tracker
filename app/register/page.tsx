@@ -11,6 +11,7 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
+    whatsappNumber: "",
   });
   const [error, setError] = useState("");
 
@@ -57,6 +58,14 @@ export default function RegisterPage() {
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
+        />
+
+        <input
+          placeholder="Whatsapp Number"
+          type="text"
+          className="input"
+          value={form.whatsappNumber}
+          onChange={(e) => setForm({ ...form, whatsappNumber: e.target.value })}
         />
 
         <input

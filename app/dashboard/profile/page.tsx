@@ -1,8 +1,22 @@
-export default function ProfilePage() {
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
+import UpdateWhatsappForm from "./UpdateWhatsappForm";
+
+export default async function ProfilePage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) redirect("/login");
+
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-4">Profile</h1>
-      <p>User profile info here</p>
+    <div className="max-w-md mx-auto p-6 space-y-4">
+      <h1 className="text-xl font-bold">Profile</h1>
+
+      <p className="text-sm text-gray-600">
+        Logged in as {session.user.email}
+      </p>
+
+      <UpdateWhatsappForm />
     </div>
   );
 }

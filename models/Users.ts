@@ -18,6 +18,12 @@ const UserSchema = new Schema(
       required: false,
       minlength: 6,
     },
+    whatsapp: {
+      type: String,
+      unique: true,
+      sparse: true, // allows users without WhatsApp
+    }
+
   },
   { timestamps: true }
 );

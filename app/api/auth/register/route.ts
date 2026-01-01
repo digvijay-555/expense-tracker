@@ -6,7 +6,7 @@ import { signToken } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, whatsappNumber} = await req.json();
 
     // Validation
     if (!name || !email || !password) {
@@ -47,6 +47,7 @@ export async function POST(req: Request) {
           id: user._id,
           name: user.name,
           email: user.email,
+          whatsappNumber: user.whatsappNumber,
         },
       },
       { status: 201 }
