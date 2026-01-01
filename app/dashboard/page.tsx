@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import SummaryCards from "./components/SummaryCards";
 import ExpenseList from "./components/ExpenseList";
+import AddExpenseForm from "./components/AddExpenseForm";
+
 
 async function getExpenses(token: string) {
   const res = await fetch("http://localhost:3000/api/expense", {
@@ -33,7 +35,7 @@ export default async function DashboardPage() {
       <pre className="bg-gray-100 p-4 rounded">
         {JSON.stringify(analytics, null, 2)}
       </pre>
-
+      <AddExpenseForm token={token} />
       <ExpenseList expenses={expenses} token={token} />
       <SummaryCards totalSpent={analytics.totalSpent} />
     </div>

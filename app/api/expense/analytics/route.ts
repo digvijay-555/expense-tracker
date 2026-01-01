@@ -25,8 +25,8 @@ export async function GET(req: NextRequest) {
     }
 
     // Month range
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 1);
+    const startDate = new Date(year, month, 1);
+    const endDate = new Date(year, month, 31);
 
     const analytics = await Expense.aggregate([
       {
