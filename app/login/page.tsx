@@ -70,13 +70,15 @@ export default function LoginPage() {
             Register
           </span>
         </p>
-      </form>
-            <button
+
+        <button
         onClick={() => signIn("google", { redirect: true })}
         className="border w-full py-2 mt-4 rounded flex justify-center"
         >
         Continue with Google
         </button>
+      </form>
+            
 
     </div>
   );

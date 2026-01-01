@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 
@@ -7,6 +8,7 @@ import ExpenseList from "./components/ExpenseList";
 import AddExpenseForm from "./components/AddExpenseForm";
 import ExpenseChart from "./components/ExpenseChart";
 import LogoutButton from "./components/LogoutButton";
+import TopExpenseList from "./components/TopExpenseList";
 
 /* ------------------ API HELPERS ------------------ */
 
@@ -42,6 +44,7 @@ async function getAnalytics(token: string) {
 export default async function DashboardPage() {
   // ✅ Use NextAuth session (works for Google + credentials)
   const session = await getServerSession(authOptions);
+  
 
   // 🔐 Protect route
   if (!session) {
@@ -56,20 +59,24 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
+      
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Expense Dashboard</h1>
-        <LogoutButton />
+        {/* <LogoutButton /> */}
       </div>
 
       <p className="text-sm text-gray-600">
         Logged in as {session.user.email}
       </p>
-
+      
       <ExpenseChart expenses={expenses} />
 
-      <AddExpenseForm token={token} />
+      
+        <AddExpenseForm token={token} />
+      
+      <TopExpenseList expenses={expenses} token={token} />
 
-      <ExpenseList expenses={expenses} token={token} />
+      {/* <ExpenseList expenses={expenses} token={token} /> */}
 
       <SummaryCards totalSpent={analytics.totalSpent} />
     </div>

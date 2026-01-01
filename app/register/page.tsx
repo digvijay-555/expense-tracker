@@ -81,13 +81,15 @@ export default function RegisterPage() {
             Login
           </span>
         </p>
-      </form>
-      <button
+
+        <button
   onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
   className="border w-full py-2 mt-4 rounded flex justify-center"
 >
   Continue with Google
 </button>
+      </form>
+      
 
     </div>
   );
