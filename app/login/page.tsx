@@ -1,4 +1,6 @@
 "use client";
+import { signIn } from "next-auth/react";
+
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -69,6 +71,13 @@ export default function LoginPage() {
           </span>
         </p>
       </form>
+            <button
+        onClick={() => signIn("google", { redirect: true })}
+        className="border w-full py-2 mt-4 rounded flex justify-center"
+        >
+        Continue with Google
+        </button>
+
     </div>
   );
 }

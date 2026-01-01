@@ -1,11 +1,14 @@
-import { cookies } from "next/headers";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
+
 import SummaryCards from "./components/SummaryCards";
 import ExpenseList from "./components/ExpenseList";
 import AddExpenseForm from "./components/AddExpenseForm";
 import ExpenseChart from "./components/ExpenseChart";
 import LogoutButton from "./components/LogoutButton";
 
+/* ------------------ API HELPERS ------------------ */
 
 async function getExpenses(token: string) {
   const res = await fetch("http://localhost:3000/api/expense", {
@@ -16,36 +19,8 @@ async function getExpenses(token: string) {
   });
 
   if (!res.ok) throw new Error("Failed to fetch expenses");
-  return res;
+  return res.json();
 }
-
-
-export default async function DashboardPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-
-  if (!token) redirect("/login");
-
-  const analytics = await getAnalytics(token);
-  const expensesRes = await getExpenses(token);
-  const expenses = await expensesRes.json();
-
-  return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Expense Dashboard</h1>
-        <LogoutButton />
-
-      <pre className="bg-gray-100 p-4 rounded">
-        {JSON.stringify(analytics, null, 2)}
-      </pre>
-        <ExpenseChart expenses={expenses} />
-      <AddExpenseForm token={token} />
-      <ExpenseList expenses={expenses} token={token} />
-      <SummaryCards totalSpent={analytics.totalSpent} />
-    </div>
-  );
-}
-
 
 async function getAnalytics(token: string) {
   const res = await fetch(
@@ -58,9 +33,45 @@ async function getAnalytics(token: string) {
     }
   );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch analytics");
+  if (!res.ok) throw new Error("Failed to fetch analytics");
+  return res.json();
+}
+
+/* ------------------ DASHBOARD ------------------ */
+
+export default async function DashboardPage() {
+  // ✅ Use NextAuth session (works for Google + credentials)
+  const session = await getServerSession(authOptions);
+
+  // 🔐 Protect route
+  if (!session) {
+    redirect("/login");
   }
 
-  return res.json();
+  // ✅ Your app JWT (created after Google sign-in)
+  const token = session.appToken;
+
+  const analytics = await getAnalytics(token);
+  const expenses = await getExpenses(token);
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Expense Dashboard</h1>
+        <LogoutButton />
+      </div>
+
+      <p className="text-sm text-gray-600">
+        Logged in as {session.user.email}
+      </p>
+
+      <ExpenseChart expenses={expenses} />
+
+      <AddExpenseForm token={token} />
+
+      <ExpenseList expenses={expenses} token={token} />
+
+      <SummaryCards totalSpent={analytics.totalSpent} />
+    </div>
+  );
 }

@@ -1,4 +1,8 @@
 import jwt from "jsonwebtoken";
+import GoogleProvider from "next-auth/providers/google";
+import type { NextAuthOptions } from "next-auth";
+import { connectDB } from "@/lib/db";
+import { User as UserModel } from "@/models/Users";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -6,14 +10,100 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined");
 }
 
-export function signToken(payload: object) {
+/* =========================
+   APP JWT HELPERS (UNCHANGED)
+========================= */
+
+export function signToken(payload: { userId: string; email: string }) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 }
 
 export function verifyToken(token: string) {
-  return jwt.verify(token, JWT_SECRET);
+  return jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
 }
 
+/* =========================
+   NEXTAUTH CONFIG (NEW)
+========================= */
+
+export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
+
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+
+  callbacks: {
+    /**
+     * Runs on sign-in (Google)
+     * Ensures DB user exists
+     */
+    async signIn({ user, account }) {
+      if (account?.provider !== "google") return true;
+
+      await connectDB();
+
+      let dbUser = await UserModel.findOne({ email: user.email });
+
+      if (!dbUser) {
+        dbUser = await UserModel.create({
+          name: user.name,
+          email: user.email,
+          provider: "google",
+        });
+      }
+
+      // attach DB userId to NextAuth user
+      (user as any).id = dbUser._id.toString();
+
+      return true;
+    },
+
+    /**
+     * Runs whenever JWT is created/updated
+     * We generate OUR app token here
+     */
+    async jwt({ token, user }) {
+      if (user) {
+        const userId = (user as any).id;
+
+        token.userId = userId;
+
+        token.appToken = signToken({
+          userId,
+          email: user.email!,
+        });
+      }
+
+      return token;
+    },
+
+    /**
+     * Expose app token to session
+     */
+    async session({ session, token }) {
+      session.user.id = token.userId as string;
+      (session as any).appToken = token.appToken;
+      return session;
+    },
+
+    /**
+     * Force redirect after login
+     */
+    async redirect({ baseUrl }) {
+      return `${baseUrl}/dashboard`;
+    },
+  },
+};
+
+/* =========================
+   BACKEND HELPER (UNCHANGED)
+========================= */
 
 import { NextRequest } from "next/server";
 
@@ -27,7 +117,7 @@ export function getUserFromRequest(req: NextRequest) {
   const token = authHeader.split(" ")[1];
 
   try {
-    return verifyToken(token) as { userId: string };
+    return verifyToken(token);
   } catch {
     return null;
   }
