@@ -13,10 +13,10 @@ type Expense = {
   category: string;
 };
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF"];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 export default function ExpenseChart({ expenses }: { expenses: Expense[] }) {
-  // group by category
+  // Group by category
   const dataMap: Record<string, number> = {};
 
   expenses.forEach((e) => {
@@ -31,28 +31,52 @@ export default function ExpenseChart({ expenses }: { expenses: Expense[] }) {
   if (chartData.length === 0) return null;
 
   return (
-    <div className="bg-white p-4 rounded shadow h-[300px]">
-      <h2 className="font-semibold mb-4">Expenses by Category</h2>
+    <div
+      className="p-6 rounded-lg
+                 bg-[var(--card)]
+                 border border-[var(--border)]
+                 shadow-sm"
+    >
+      <h2 className="font-semibold mb-4">
+        Expenses by Category
+      </h2>
 
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={chartData}
-            dataKey="value"
-            nameKey="name"
-            outerRadius={100}
-            label
-          >
-            {chartData.map((_, index) => (
-              <Cell
-                key={index}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip />
-        </PieChart>
-      </ResponsiveContainer>
+      {/* IMPORTANT: give the chart a fixed height */}
+      <div className="h-72">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={110}
+              innerRadius={50}
+              paddingAngle={2}
+              label={({ name, value }) => `${name}: ${value}`}
+              labelLine={false}
+            >
+              {chartData.map((_, index) => (
+                <Cell
+                  key={index}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+
+            {/* Dark-mode friendly tooltip */}
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#020617",
+                border: "1px solid #1e293b",
+                color: "#e5e7eb",
+                borderRadius: "6px",
+              }}
+              itemStyle={{ color: "#e5e7eb" }}
+              cursor={{ fill: "rgba(255,255,255,0.05)" }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

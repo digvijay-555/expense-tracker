@@ -10,48 +10,79 @@ type Expense = {
   date: string;
 };
 
-export default function ExpenseList({ expenses, token }: { expenses: Expense[]; token?: string }) {
+export default function ExpenseList({
+  expenses,
+  token,
+}: {
+  expenses: Expense[];
+  token?: string;
+}) {
   const router = useRouter();
 
   async function deleteExpense(id: string, token?: string) {
     const res = await fetch(`/api/expense?id=${id}`, {
       method: "DELETE",
       headers: {
-      Authorization: `Bearer ${token}`,
-    },
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (res.ok) {
-      router.refresh(); // re-fetch server data
+      router.refresh();
     } else {
       alert("Failed to delete expense");
     }
   }
 
   if (expenses.length === 0) {
-    return <p className="text-gray-500">No expenses yet.</p>;
+    return (
+      <p className="text-[var(--foreground)] opacity-60">
+        No expenses yet.
+      </p>
+    );
   }
 
   return (
-    <div className="bg-white rounded shadow divide-y">
+    <div
+      className="rounded-lg
+                 bg-[var(--card)]
+                 border border-[var(--border)]
+                 shadow-sm"
+    >
       {expenses.map((e) => (
         <div
           key={e._id}
-          className="flex justify-between items-center p-4"
+          className="flex justify-between items-center p-4
+                     border-b border-[var(--border)]
+                     last:border-b-0
+                     hover:bg-white/5 transition"
         >
+          {/* Left */}
           <div>
-            <p className="font-medium">{e.category}</p>
-            <p className="text-sm text-gray-500">
+            <p className="font-medium">
+              {e.category}
+            </p>
+
+            <p className="text-sm opacity-60">
               {new Date(e.date).toDateString()}
             </p>
-            {e.note && <p className="text-sm">{e.note}</p>}
+
+            {e.note && (
+              <p className="text-sm opacity-80">
+                {e.note}
+              </p>
+            )}
           </div>
 
+          {/* Right */}
           <div className="flex items-center gap-4">
-            <span className="font-bold">₹{e.amount}</span>
+            <span className="font-bold text-red-500">
+              ₹{e.amount}
+            </span>
+
             <button
               onClick={() => deleteExpense(e._id, token)}
-              className="text-red-600 hover:underline"
+              className="text-red-500 hover:underline"
             >
               Delete
             </button>

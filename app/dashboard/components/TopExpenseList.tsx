@@ -36,42 +36,65 @@ export default function TopExpenseList({
     }
   }
 
-  // ✅ Sort & take top expenses
   const topExpenses = [...expenses]
     .sort((a, b) => b.amount - a.amount)
     .slice(0, limit);
 
   if (topExpenses.length === 0) {
-    return <p className="text-gray-500">No expenses yet.</p>;
+    return (
+      <p className="text-[var(--foreground)] opacity-60">
+        No expenses yet.
+      </p>
+    );
   }
 
   return (
-    <div className="bg-white rounded shadow">
-      <h2 className="text-lg font-semibold p-4 border-b">
+    <div
+      className="rounded-lg
+                 bg-[var(--card)]
+                 border border-[var(--border)]
+                 shadow-sm"
+    >
+      <h2
+        className="text-lg font-semibold p-4
+                   border-b border-[var(--border)]"
+      >
         Top Expenses
       </h2>
 
-      <div className="divide-y">
+      <div>
         {topExpenses.map((e) => (
           <div
             key={e._id}
-            className="flex justify-between items-center p-4"
+            className="flex justify-between items-center p-4
+                       border-b border-[var(--border)]
+                       last:border-b-0
+                       hover:bg-white/5 transition"
           >
             <div>
-              <p className="font-medium">{e.category}</p>
-              <p className="text-sm text-gray-500">
+              <p className="font-medium">
+                {e.category}
+              </p>
+
+              <p className="text-sm opacity-60">
                 {new Date(e.date).toDateString()}
               </p>
-              {e.note && <p className="text-sm">{e.note}</p>}
+
+              {e.note && (
+                <p className="text-sm opacity-80">
+                  {e.note}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center gap-4">
-              <span className="font-bold text-red-600">
+              <span className="font-bold text-red-500">
                 ₹{e.amount}
               </span>
+
               <button
                 onClick={() => deleteExpense(e._id, token)}
-                className="text-red-600 hover:underline"
+                className="text-red-500 hover:underline"
               >
                 Delete
               </button>

@@ -1,7 +1,6 @@
 "use client";
+
 import { signIn } from "next-auth/react";
-
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -18,7 +17,7 @@ export default function LoginPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
-      credentials: "include", // 🔐 IMPORTANT
+      credentials: "include",
     });
 
     const data = await res.json();
@@ -32,19 +31,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div
+      className="min-h-screen flex items-center justify-center
+                 bg-[var(--background)]
+                 text-[var(--foreground)]"
+    >
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow w-96"
+        className="w-full max-w-sm p-6 rounded-lg
+                   bg-[var(--card)]
+                   border border-[var(--border)]
+                   shadow-lg space-y-4"
       >
-        <h1 className="text-xl font-semibold mb-4">Login</h1>
+        <h1 className="text-xl font-semibold text-center">
+          Login
+        </h1>
 
         <input
           placeholder="Email"
           type="email"
           className="input"
           value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onChange={(e) =>
+            setForm({ ...form, email: e.target.value })
+          }
           required
         />
 
@@ -53,33 +63,54 @@ export default function LoginPage() {
           type="password"
           className="input"
           value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChange={(e) =>
+            setForm({ ...form, password: e.target.value })
+          }
           required
         />
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm">
+            {error}
+          </p>
+        )}
 
-        <button className="btn-primary w-full mt-4">Login</button>
+        <button
+          type="submit"
+          className="btn-primary w-full"
+        >
+          Login
+        </button>
 
-        <p className="text-sm mt-3">
+        <p className="text-sm text-center">
           No account?{" "}
           <span
-            className="text-blue-600 cursor-pointer"
+            className="text-blue-500 cursor-pointer hover:underline"
             onClick={() => router.push("/register")}
           >
             Register
           </span>
         </p>
 
+        <div className="relative text-center">
+          <span className="text-sm opacity-60">
+            or
+          </span>
+        </div>
+
         <button
-        onClick={() => signIn("google", { redirect: true })}
-        className="border w-full py-2 mt-4 rounded flex justify-center"
+          type="button"
+          onClick={() =>
+            signIn("google", { redirect: true })
+          }
+          className="w-full py-2 rounded
+                     border border-[var(--border)]
+                     hover:bg-white/5
+                     transition"
         >
-        Continue with Google
+          Continue with Google
         </button>
       </form>
-            
-
     </div>
   );
 }
