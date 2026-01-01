@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import SummaryCards from "./components/SummaryCards";
 import ExpenseList from "./components/ExpenseList";
 import AddExpenseForm from "./components/AddExpenseForm";
+import ExpenseChart from "./components/ExpenseChart";
+import LogoutButton from "./components/LogoutButton";
 
 
 async function getExpenses(token: string) {
@@ -31,10 +33,12 @@ export default async function DashboardPage() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Expense Dashboard</h1>
+        <LogoutButton />
 
       <pre className="bg-gray-100 p-4 rounded">
         {JSON.stringify(analytics, null, 2)}
       </pre>
+        <ExpenseChart expenses={expenses} />
       <AddExpenseForm token={token} />
       <ExpenseList expenses={expenses} token={token} />
       <SummaryCards totalSpent={analytics.totalSpent} />
