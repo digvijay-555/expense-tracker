@@ -9,6 +9,8 @@ import AddExpenseForm from "./components/AddExpenseForm";
 import ExpenseChart from "./components/ExpenseChart";
 import LogoutButton from "./components/LogoutButton";
 import TopExpenseList from "./components/TopExpenseList";
+import SendWhatsappButton from "./components/SendWhatsappButton";
+import DownloadPdfButton from "./components/DownloadPdfButton";
 
 /* ------------------ API HELPERS ------------------ */
 
@@ -73,6 +75,10 @@ export default async function DashboardPage() {
 
       
         <AddExpenseForm token={token} />
+        <SendWhatsappButton token={token} />
+        <DownloadPdfButton token={token} />
+
+
       
       <TopExpenseList expenses={expenses} token={token} />
 
