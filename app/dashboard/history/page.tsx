@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 
 async function getExpenses(token: string) {
-  const res = await fetch("http://localhost:3000/api/expense", {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/expense`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -15,6 +15,8 @@ async function getExpenses(token: string) {
   if (!res.ok) throw new Error("Failed to fetch expenses");
   return res.json();
 }
+
+
 
 export default async function HistoryPage() {
     const session = await getServerSession(authOptions);
