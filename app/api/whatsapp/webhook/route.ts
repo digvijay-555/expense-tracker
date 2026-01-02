@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/models/Expense";
 import { getUserFromWhatsapp } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 
 /**
  * Twilio sends form-data (not JSON)
@@ -31,15 +34,35 @@ export async function POST(req: NextRequest) {
   /* ---------------- LIST COMMAND ---------------- */
 
   if (isListCommand(body)) {
+
+    // const user = await getUserFromWhatsapp(from);
+    
+        // if (!user) {
+        //   return NextResponse.json(
+        //     { message: "Unauthorized" },
+        //     { status: 401 }
+        //   );
+        // }
+    
+        //await connectDB();
+    
     const expenses = await Expense.find({ userId: user.userId })
-      .sort({ date: -1 })
-      .limit(5);
+      .sort({ date: -1 });
 
     if (expenses.length === 0) {
       return twilioReply("📭 No expenses found.");
     }
 
-    const message = formatExpenseList(expenses);
+    let message = "📊 Your recent expenses:\n\n";
+
+    expenses.forEach((e, i) => {
+      const date = new Date(e.date).toLocaleDateString();
+      message += `${i + 1}. ₹${e.amount} • ${e.category}\n`;
+      message += `   ${e.note || ""} (${date})\n\n`;
+    });
+
+
+
 
     return twilioReply(message);
   }
