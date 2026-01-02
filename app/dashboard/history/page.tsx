@@ -32,6 +32,8 @@ export default async function HistoryPage() {
             <p className="text-sm text-gray-600">
                 Logged in as {session.user.email}
             </p>
+            <br />
+            
 
             <ExpenseList expenses={expenses} token={token} />
         </div>
