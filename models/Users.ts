@@ -22,7 +22,11 @@ const UserSchema = new Schema(
       type: String,
       unique: true,
       sparse: true, // allows users without WhatsApp
-    }
+    },
+    provider: {
+      type: String,
+      enum: ["google", "credentials"],
+    },
 
   },
   { timestamps: true }
