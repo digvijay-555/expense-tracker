@@ -12,7 +12,7 @@ export default function UpdateWhatsappForm() {
     const res = await fetch("/api/user/whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ whatsapp }),
+      body: JSON.stringify({ whatsapp: "whatsapp:+91" + whatsapp }),
     });
 
     const data = await res.json();
@@ -33,7 +33,7 @@ export default function UpdateWhatsappForm() {
 
       <input
         className="border p-2 w-full"
-        placeholder="whatsapp:+91XXXXXXXXXX"
+        placeholder=""
         value={whatsapp}
         onChange={(e) => setWhatsapp(e.target.value)}
       />

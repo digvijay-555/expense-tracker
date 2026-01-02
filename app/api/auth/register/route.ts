@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       name,
       email,
       password: hashedPassword,
-      whatsapp: whatsappNumber || undefined, // 🔥 FIXED
+      whatsapp: "whatsapp:+91" + whatsappNumber || undefined, // 🔥 FIXED
       provider: "credentials",
     });
 
