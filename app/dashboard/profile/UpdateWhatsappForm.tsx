@@ -46,10 +46,7 @@ export default function UpdateWhatsappForm() {
       </button>
 
       {status && <p className="text-sm">{status}</p>}
-
-      <p className="text-xs text-gray-500">
-        Format: whatsapp:+countrycodeNumber
-      </p>
+    
     </div>
   );
 }
