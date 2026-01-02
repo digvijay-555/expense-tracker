@@ -13,7 +13,7 @@ import TopExpenseList from "./components/TopExpenseList";
 /* ------------------ API HELPERS ------------------ */
 
 async function getExpenses(token: string) {
-  const res = await fetch("http://localhost:3000/api/expense", {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/expense`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -26,7 +26,7 @@ async function getExpenses(token: string) {
 
 async function getAnalytics(token: string) {
   const res = await fetch(
-    "http://localhost:3000/api/expense/analytics?month=12&year=2025",
+    `${process.env.NEXTAUTH_URL}/api/expense/analytics?month=12&year=2025`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
