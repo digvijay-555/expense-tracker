@@ -61,7 +61,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import UpdateWhatsappForm from "./UpdateWhatsappForm";
 import UploadProfile from "./UploadProfile";
-
+import LogoutButton from "./LogoutButton";
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/Users";
 
@@ -101,6 +101,7 @@ export default async function ProfilePage() {
         </div>
 
         <UpdateWhatsappForm />
+         <LogoutButton /> 
       </div>
     </div>
   );
