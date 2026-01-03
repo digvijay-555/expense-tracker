@@ -270,14 +270,18 @@ export const authOptions: NextAuthOptions = {
 export function getUserFromRequest(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return null;
+  if (authHeader?.startsWith("Bearer ")) {
+    try {
+      return verifyToken(authHeader.split(" ")[1]);
+    } catch {}
   }
 
-  const token = authHeader.split(" ")[1];
+  // 2️⃣ Fallback to cookie
+  const cookieToken = req.cookies.get("token")?.value;
+  if (!cookieToken) return null;
 
   try {
-    return verifyToken(token);
+    return verifyToken(cookieToken);
   } catch {
     return null;
   }

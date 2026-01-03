@@ -27,6 +27,10 @@ const UserSchema = new Schema(
       type: String,
       enum: ["google", "credentials"],
     },
+    cid: {
+      type: String, // image CID
+      default: null,
+    },
 
   },
   { timestamps: true }
