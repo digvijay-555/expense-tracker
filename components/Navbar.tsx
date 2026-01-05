@@ -115,6 +115,13 @@ export default function Navbar() {
           History
         </Link>
 
+        <Link
+          href="/recurring"
+          className="px-3 py-1 rounded hover:bg-white/10"
+        >
+          Recurring Expenses
+        </Link>
+
         {/* Profile Avatar */}
         <Link href="/dashboard/profile">
           <div className="h-8 w-8 rounded-full overflow-hidden border border-white/20 hover:opacity-80">
